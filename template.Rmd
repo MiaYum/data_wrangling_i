@@ -1,0 +1,10 @@
+---
+title: "template"
+author: "Mia Yu"
+date: "2023-09-19"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
