@@ -5,6 +5,29 @@ date: "2023-09-19"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r}
+library(tidyverse)
 ```
+
+Let's import the FAS_litters.csv.
+
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv")
+
+litters_df = 
+  janitor::clean_names("litters_df")
+
+```
+
+Import the same datesets using an absolute path.
+
+```{r}
+litters_df_abs = 
+  read_csv("/Users/mia/Desktop/data_wrangling_i/data/FAS_litters.csv")
+
+litters_df = 
+  janitor::clean_names("litters_df_abs")
+
+```
+
