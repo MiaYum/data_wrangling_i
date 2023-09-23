@@ -1,0 +1,122 @@
+---
+title: "template"
+author: "Mia Yu"
+date: "2023-09-19"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+library(readxl)
+```
+
+Let's import the FAS_litters.csv.
+
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv")
+
+#litters_df = 
+#  janitor::clean_names("litters_df")
+
+```
+
+Import the same datesets using an absolute path.
+
+```{r}
+litters_df_abs = 
+  read_csv("/Users/mia/Desktop/data_wrangling_i/data/FAS_litters.csv")
+
+# litters_df = 
+#  janitor::clean_names("litters_df_abs")
+
+```
+
+## Look at data
+
+```{r}
+litters_df
+
+head(litters_df)
+
+tail(litters_df)
+```
+
+You can use 'view'
+
+```{r, eval = FALSE}
+view(litters_df)
+```
+
+Look at a data summary
+
+```{r}
+str(litters_df)
+
+skimr::skim(litters_df)
+```
+
+## Options in `read_*`
+
+```{r}
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+    skip = 10, col_names = FALSE,
+    show_col_types = FALSE)
+```
+
+Look at NA values.
+
+```{r}
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+     na = c("NA",19))
+```
+```{r}
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+     col_types = 
+      cols(
+        `GDO Weight` = col_character()
+      ))
+```
+
+## Other file types
+
+Import a xlsx file first.
+
+```{r}
+mlb_df = 
+  read_excel("data/mlb11.xlsx")
+```
+
+Import a SAS file.
+
+```{r}
+pulse_df = 
+  read_sas()
+```
+
+## Base R ...
+
+don't do this
+```{r, eval = FALSE}
+litters_df = 
+  read.csv("data/FAS_litters.csv")
+
+litters_df$Gr
+```
+
+##Export data
+
+```{r}
+litters_df_cleand = 
+  read.csv("data/FAS_litters.csv")
+# litters_df_cleaned = 
+#  janitor::clean_names("litters_df_cleaned")
+
+write_csv(litters_df_cleand,"data_cleaned_csv")
+```
