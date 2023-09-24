@@ -1,5 +1,5 @@
 ---
-title: "template"
+title: "data_manipulation"
 author: "Mia Yu"
 date: "2023-09-19"
 output: github_document
@@ -10,113 +10,100 @@ library(tidyverse)
 library(readxl)
 ```
 
-Let's import the FAS_litters.csv.
+Inport FAS litters and pups.
 
 ```{r}
 litters_df = 
   read_csv("data/FAS_litters.csv")
+litters_df = janitor::clean_names(litters_df) # make the name of variables in litters_df cleaner
 
-#litters_df = 
-#  janitor::clean_names("litters_df")
-
+pups_df = 
+  read_csv("data/FAS_pups.csv")
+puprs_df = janitor::clean_names(pups_df)
 ```
 
-Import the same datesets using an absolute path.
+## `select`
+
+`select` is used to select columns!
 
 ```{r}
-litters_df_abs = 
-  read_csv("/Users/mia/Desktop/data_wrangling_i/data/FAS_litters.csv")
+select(litters_df, group, litter_number, gd0_weight) # only show litternumber and gd0weight
 
-# litters_df = 
-#  janitor::clean_names("litters_df_abs")
+select(litters_df, group, gd0_weight:gd_of_birth) #show the vec from gd0weight to gdofbirth
 
+select(litters_df, group, starts_with("pups")) #show the vec started with "pups"
+
+select(litters_df, -litter_number) #remove vec litter_number
+
+select(litters_df, -starts_with("gd")) #remove vec started with gd
+
+select(litters_df, group, litter_id = litter_number) #rename litter_id
+
+select(litters_df, group, litter_id = litter_number, everything()) #rename litter_id but keep everything afterward
+
+select(litters_df, gd0_weight, everything()) #reorder (show the gd0_weight first and keep everything else)
+
+#not saving everything
+
+# litters_df = select(litters_df, group, litter_number, gd0_weight) # rewrite (save)
 ```
 
-## Look at data
+do the same thing as:
 
 ```{r}
-litters_df
+rename(litters_df, litter_id = litter_number)
 
-head(litters_df)
-
-tail(litters_df)
+relocate(litters_df, litter_number)
 ```
 
-You can use 'view'
-
-```{r, eval = FALSE}
-view(litters_df)
+`select` vs `pull
+```{r}
+select(litters_df, group)
+pull(litters_df, group) # replace the "$", doesn't exsit dataframe, float
 ```
 
-Look at a data summary
+## `filter`
+
+get rid of rows using `filter()`
 
 ```{r}
-str(litters_df)
+filter(litters_df, group == "Con7" ) # only leave the group is Con7
 
-skimr::skim(litters_df)
+filter(litters_df, group != "Con7" )
+filter(litters_df, !(group == "Con7"))
+
+# "<, >, !="
+
+filter(litters_df, group == "Con7" | group == "Mod8")
+filter(litters_df, group %in% c("Con7", "Mod8"))
 ```
 
-## Options in `read_*`
+what about missing rows
 
 ```{r}
-litters_df = 
-  read_csv(
-    "data/FAS_litters.csv",
-    skip = 10, col_names = FALSE,
-    show_col_types = FALSE)
+drop_na(litters_df) # get rid of all the colums having missing value
+drop_na(litters_df, gd0_weight)
 ```
 
-Look at NA values.
+## `mutate
+
+this is used to add or change variables
 
 ```{r}
-litters_df = 
-  read_csv(
-    "data/FAS_litters.csv",
-     na = c("NA",19))
-```
-```{r}
-litters_df = 
-  read_csv(
-    "data/FAS_litters.csv",
-     col_types = 
-      cols(
-        `GDO Weight` = col_character()
-      ))
+mutate(litters_df, wt_gain = gd18_weight - gd0_weight) # create a new vec
+
+mutate(litters_df, group = str_to_lower(group)) # equal to the lower case
+
+mutate(litters_df,
+       wt_gain = gd18_weight - gd0_weight,
+       group = str_to_lower(group))
 ```
 
-## Other file types
-
-Import a xlsx file first.
+## `arrange`
 
 ```{r}
-mlb_df = 
-  read_excel("data/mlb11.xlsx")
-```
+arrange(litters_df, gd0_weight)
 
-Import a SAS file.
+arrange(litters_df, group, gd0_weight) # order the colums by first group and after gd0weight
 
-```{r}
-pulse_df = 
-  read_sas()
-```
-
-## Base R ...
-
-don't do this
-```{r, eval = FALSE}
-litters_df = 
-  read.csv("data/FAS_litters.csv")
-
-litters_df$Gr
-```
-
-##Export data
-
-```{r}
-litters_df_cleand = 
-  read.csv("data/FAS_litters.csv")
-# litters_df_cleaned = 
-#  janitor::clean_names("litters_df_cleaned")
-
-write_csv(litters_df_cleand,"data_cleaned_csv")
 ```
